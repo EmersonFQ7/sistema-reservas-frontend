@@ -1,11 +1,12 @@
 // frontend/src/app/login/page.js
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/utils/api";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -14,7 +15,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("registrado") === "exito") {
+    if (searchParams && searchParams.get("registrado") === "exito") {
       setMsgExito("¡Cuenta creada con éxito! Por favor ingresa tus credenciales.");
     }
   }, [searchParams]);
@@ -32,7 +33,7 @@ export default function LoginPage() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.usuario));
 
-      // ➕ AÑADE ESTA LÍNEA AQUÍ:
+      // Añade esta línea para persistencia en cookies
       document.cookie = `token=${data.token}; path=/; max-age=86400; SameSite=Strict`;
 
       // Redirección limpia y recarga de estado global
@@ -106,5 +107,14 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// El export default ahora envuelve de forma segura el componente en un Suspense boundary
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="text-center p-10">Cargando inicio de sesión...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

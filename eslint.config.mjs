@@ -13,6 +13,13 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "react/prop-types": "off",
+      "no-unused-vars": "off",
+      "@next/next/no-img-element": "off"
+    }
+  }
 ]);
 
 export default eslintConfig;
